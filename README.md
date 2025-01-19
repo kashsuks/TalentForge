@@ -55,7 +55,7 @@ Handling user profiles, skill sets, and trade history called for a database stru
 ### **Majority of teammates first time using MongoDB Atlas*  
 Developing a matching algorithm that consistently produced relevant and mutually beneficial pairings took experimentation. We refined the algorithm to consider factors like skill compatibility and location to optimize results.  
 
-### **Figure How to Implement Gronq's API **  
+### **Figure How to Implement Groq's API **  
 Encouraging ongoing participation was a challenge, so we introduced features like badges, skill endorsements, and reviews to foster trust and incentivize engagement.  
 
 ---
