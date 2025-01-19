@@ -1,37 +1,50 @@
-# Specify the Docker provider
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "3.0.2"  # Replace with the latest version available
+    }
+  }
+}
+
 provider "docker" {
-  host = "unix:///var/run/docker.sock"
+  host = "unix:///var/run/docker.sock"  # Ensure this is the correct path to your Docker socket
 }
 
-# Define the Docker image using your GitHub repository
-resource "docker_image" "talentforge_image" {
-  name = "talentforge:latest"
+# Backend Docker image
+resource "docker_image" "backend_image" {
+  name = "talentforge_backend:latest"
   build {
-    context = "https://github.com/kashsuks/TalentForge.git"
+    context    = "${path.module}/backend"
+    dockerfile = "Dockerfile"
   }
 }
 
-# Define a Docker container using the built image
-resource "docker_container" "talentforge_container" {
-  name  = "talentforge"
-  image = docker_image.talentforge_image.latest
-
-  # Expose the container on a specific port (adjust if necessary)
-  ports {
-    internal = 80   # The container's internal port
-    external = 8080 # The host's external port
+# Frontend Docker image
+resource "docker_image" "frontend_image" {
+  name = "talentforge_frontend:latest"
+  build {
+    context    = "${path.module}/frontend/talent-forger-app"
+    dockerfile = "Dockerfile"
   }
+}
 
-  # Optional: Volume mounts (if your app requires them)
-  # mounts {
-  #   target = "/app/data"
-  #   source = "/host/data"
-  #   type   = "bind"
-  # }
+# Backend Docker container
+resource "docker_container" "backend_container" {
+  name  = "talentforge_backend"
+  image = docker_image.backend_image.name
+  ports {
+    internal = 5000
+    external = 5000
+  }
+}
 
-  # Optional: Environment variables
-  # env = [
-  #   "ENV_VAR_NAME=value",
-  #   "ANOTHER_ENV_VAR=another_value"
-  # ]
+# Frontend Docker container
+resource "docker_container" "frontend_container" {
+  name  = "talentforge_frontend"
+  image = docker_image.frontend_image.name
+  ports {
+    internal = 3000
+    external = 3000
+  }
 }
