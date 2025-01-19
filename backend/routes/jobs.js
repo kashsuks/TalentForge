@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {client} = require('../db');
+const { client } = require('../db');
 
 const db = client.db('skillSharing');
 const collection = db.collection('jobs');

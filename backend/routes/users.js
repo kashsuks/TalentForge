@@ -163,6 +163,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     }
 });
 
+
 // New route to get user information based on email
 router.get('/user-info', async (req, res) => {
     const email = 'dummyemail@gmail.com'; // Hardcoded email for now
