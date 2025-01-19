@@ -112,3 +112,42 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         res.status(500).send('An error occurred while processing the file');
     }
 });
+
+//New route to get user info?
+router.get('/user-info', async (req, res) => {
+    const email = 'ksukshavasi@gmail.com'; //hardcode needewd for now
+
+    try {
+        const db = client.db('skillSharing');
+        const collection = db.collection('users');
+
+        const user = await collection.findOne(
+            { email },
+            {
+                projection: {
+                    'summary.name': 1,
+                    'summary.location': 1,
+                    email: 1,
+                    'summary.category': 1,
+                },
+            }
+        );
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Format the response data
+        const userInfo = {
+            name: user.summary.name,
+            location: user.summary.location,
+            email: user.email,
+            category: user.summary.category,
+        };
+
+        res.json(userInfo);
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        res.status(500).send('An error occurred while fetching the user info');
+    }
+});
