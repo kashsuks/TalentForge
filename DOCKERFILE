@@ -1,19 +1,35 @@
-# Base image
+# Use a multi-stage build for efficiency
+
+# Backend Stage
+FROM node:16-alpine AS backend-build
+
+WORKDIR /app/backend
+COPY backend/package.json backend/package-lock.json ./
+RUN npm install
+COPY backend ./
+
+# Frontend Stage
+FROM node:16-alpine AS frontend-build
+
+WORKDIR /app/frontend
+COPY frontend/talent-forger-app/package.json frontend/talent-forger-app/package-lock.json ./
+RUN npm install
+COPY frontend/talent-forger-app ./
+RUN npm run build
+
+# Production Image
 FROM node:16-alpine
 
-# Set working directory for the server
-WORKDIR /app/server
-COPY server/package.json server/package-lock.json ./
-RUN npm install
-
-# Set working directory for the client
-WORKDIR /app/client
-COPY client/package.json client/package-lock.json ./
-RUN npm install
-
-# Copy the rest of the code
 WORKDIR /app
-COPY . .
 
-# Default command (adjust based on your app)
-CMD ["npm", "start"]
+# Copy backend code
+COPY --from=backend-build /app/backend /app/backend
+
+# Copy frontend build artifacts
+COPY --from=frontend-build /app/frontend/build /app/frontend/build
+
+# Expose the port (adjust based on your app)
+EXPOSE 3000
+
+# Default command (adjust for your app's backend entry point)
+CMD ["node", "backend/index.js"]
