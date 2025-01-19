@@ -3,6 +3,7 @@ const { auth } = require('express-openid-connect');
 const dotenv = require('dotenv');
 const { client } = require('./db');
 const cors = require('cors');
+const path = require('path'); // Required for file serving
 const app = express();
 dotenv.config();
 
@@ -21,22 +22,30 @@ const config = {
     secret: process.env.AUTH0_SECRET,
 };
 
+// Enable CORS and authentication routes
 app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
-// auth router attaches /login, /logout, and /callback routes to the baseURL
+
+// Auth routes for OpenID Connect
 app.use(auth(config));
 
+// Middleware for parsing JSON and URL encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/jobs', require('./routes/jobs'))
+// Serve static files from the 'recordings' folder
+app.use('/recordings', express.static(path.join(__dirname, 'recordings')));
+
+// Use routes for jobs, users, and authentication
+app.use('/jobs', require('./routes/jobs'));
 app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
 
-// db setup
+// Database setup for skillSharing
 const db = client.db('skillSharing');
 const collection = db.collection('users');
 
+// Route for checking authentication and inserting new user
 app.get('/', (req, res) => {
     console.log('GET / route accessed');
     if (req.oidc.isAuthenticated()) {
@@ -62,7 +71,7 @@ app.get('/', (req, res) => {
     }
 });
 
-
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
