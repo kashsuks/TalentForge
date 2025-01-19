@@ -15,7 +15,7 @@ const corsOptions = {
 const config = {
     authRequired: false,
     auth0Logout: true,
-    baseURL: 'http://localhost:3100',
+    baseURL: 'http://localhost:3000',
     clientID: process.env.AUTH0_CLIENT_ID,
     issuerBaseURL: process.env.AUTH0_ISSUER_URL,
     secret: process.env.AUTH0_SECRET,
@@ -29,7 +29,7 @@ app.use(auth(config));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/jobs', require('./routes/jobs'));
+app.use('/jobs', require('./routes/jobs'))
 app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
 
@@ -66,8 +66,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
-
-
-
-
