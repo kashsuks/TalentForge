@@ -58,6 +58,20 @@ Encouraging ongoing participation was a challenge, so we introduced features lik
 
 ---
 
+## Running Locally
+In order to run Notesify locally:
+- Clone the repository and cd into it
+- run:
+```bash
+npm run dev
+```
+- After which you can go into:
+```bash
+localhost:3000
+```
+
+---
+
 ## Future Improvements  
 
 Looking ahead, we see exciting opportunities to enhance Talent Forge:  
